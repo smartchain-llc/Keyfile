@@ -1,4 +1,4 @@
-package keyfile
+package encryptionkey
 
 import (
 	"errors"
@@ -12,67 +12,63 @@ import (
 const (
 	MAX_KEY_SIZE = 4096
 	MIN_KEY_SIZE = 128
+	ENV_VAR      = "EKEY"
 )
 
 var defaultPath = fmt.Sprintf("/tmp/%s", keyfileName)
 var keyfileName = fmt.Sprintf(".%d.key", os.Getuid())
 
-type KEYY struct {
+type Keyfile struct {
 	size int
 	key  []byte
 	path string
 	info os.FileInfo
 }
-type Keyer interface {
-	IsValid() bool
-	GenerateKey() KEYY
-	SetPath(string) error
-}
 
-func LoadKey() (KEYY, error) {
+func LoadKey() (Keyfile, error) {
 	var err error
-	var k KEYY
+	var k Keyfile
 
-	k.path = os.Getenv("EKEY")
+	k.path = os.Getenv(ENV_VAR)
 
 	if k.path == "" {
-		return KEYY{}, errors.New("No EKEY var or default keys exist. Generate a keyfile with: -keygen <dirpath>")
+		return Keyfile{}, errors.New("No EKEY var or default keys exist. Generate a keyfile with: -keygen <dirpath>")
 	}
 
-	var keyFile *os.File
-	keyFile, err = os.Open(k.path)
+	var file *os.File
+	file, err = os.Open(k.path)
 	if err != nil {
 		if os.IsNotExist(err) {
-			return KEYY{}, errors.New("No EKEY var or default keys exist. Generate a keyfile with: -keygen <dirpath>")
+			return Keyfile{}, errors.New("No EKEY var or default keys exist. Generate a keyfile with: -keygen <dirpath>")
 		}
 		if os.IsPermission(err) {
-			return KEYY{}, errors.New("No valid permissions for using the keyfile.")
+			return Keyfile{}, errors.New("No valid permissions for using the keyfile.")
 		}
-		return KEYY{}, err
+		return Keyfile{}, err
 	}
-	defer keyFile.Close()
+	defer file.Close()
 
 	k.key = make([]byte, MAX_KEY_SIZE)
-	k.size, err = keyFile.Read(k.key)
+	k.size, err = file.Read(k.key)
 	k.key = k.key[:k.size]
 
 	if err != nil {
 		if os.IsPermission(err) {
-			return KEYY{}, errors.New("No valid permissions for using the keyfile.")
+			return Keyfile{}, errors.New("No valid permissions for using the keyfile.")
 		}
-		return KEYY{}, err
+		return Keyfile{}, err
 	}
 
 	return k, err
 }
 
-func GenerateKey(dstPath *string) (KEYY, error) {
-	var ret KEYY
+func GenerateKey(dstPath *string) (Keyfile, error) {
+	var ret Keyfile
 	var err error
 
 	err = ret.setPath(dstPath)
 	if err != nil {
-		return KEYY{}, err
+		return Keyfile{}, err
 	}
 
 	ret.generateKey()
@@ -80,7 +76,7 @@ func GenerateKey(dstPath *string) (KEYY, error) {
 	return ret, err
 }
 
-func (k *KEYY) generateKey() {
+func (k *Keyfile) generateKey() {
 	var err error
 
 	outfile, err := os.OpenFile(k.path, os.O_CREATE|os.O_RDWR, 0600)
@@ -105,7 +101,7 @@ func (k *KEYY) generateKey() {
 	}
 }
 
-func (k *KEYY) setPath(dstPath *string) error {
+func (k *Keyfile) setPath(dstPath *string) error {
 	var err error
 
 	if *dstPath == defaultPath || *dstPath == "default" {
@@ -152,9 +148,9 @@ func (k *KEYY) setPath(dstPath *string) error {
 	return err
 }
 
-func (k KEYY) At(pos int) byte {
+func (k Keyfile) At(pos int) byte {
 	return k.key[pos]
 }
-func (k KEYY) Size() int {
+func (k Keyfile) Size() int {
 	return k.size
 }
