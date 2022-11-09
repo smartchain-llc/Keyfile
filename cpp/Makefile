@@ -2,7 +2,7 @@ C=g++
 DIRBUILD=build
 DIRO=$(DIRBUILD)/objects
 DIRBIN=$(DIRBUILD)/bin
-FLAGS=-Wall -cstd=c++20
+FLAGS=-Wall -std=c++20
 
 setup:
 	@mkdir $(DIRBUILD)
@@ -11,8 +11,14 @@ setup:
 clean:
 	@rm -rf $(DIRBUILD)
 
-test.o: setup src/test.cpp
-	$(C) -c src/test.cpp -o $(DIRO)
+%.o: setup src/%.cpp
+	$(C) -c src/$*.cpp -o $(DIRO)/%.o
 
-test: test.o
-	$(C) $(DIRO)/$< -o $(DIRBIN)/$@ 
+test.o: src/test.cpp
+	$(C) -c src/test.cpp -o $(DIRO)/$@
+
+keyfile.o: setup 
+	$(C) -c src/keyfile.cpp -o $(DIRO)/$@
+
+test: keyfile.o test.o
+	$(C) $(DIRO)/keyfile.o $(DIRO)/test.o -o $(DIRBIN)/$@ 

@@ -2,14 +2,13 @@
 
 #include <iostream>
 #include <istream>
+#include <fstream>
 #include <filesystem>
 #include <cstddef>
 
-#define PAGE_SIZE 4096;
+#define PAGE_SIZE 4096
 
 class Keyfile{
-    // using byte_stream = std::basic_iostream<std::byte>;
-    // using byte_data = unsigned char*;
     using path = std::filesystem::path;
     public:
         static inline const path        defaultDirectory    { std::getenv("HOME") };
@@ -21,10 +20,8 @@ class Keyfile{
     private:
         struct Key{
             using byte = unsigned char;
-            
-            private:
-
+            byte data[PAGE_SIZE];
         };
-        // byte_stream* iostream;
         
+        Key key;
 };
