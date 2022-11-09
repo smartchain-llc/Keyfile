@@ -8,6 +8,13 @@
 
 #define PAGE_SIZE 4096
 
+using byte = unsigned char;
+struct Key{
+    byte* data      = nullptr;
+    size_t size     = PAGE_SIZE;
+
+    private:
+};
 class Keyfile{
     using path = std::filesystem::path;
     public:
@@ -15,13 +22,6 @@ class Keyfile{
         static inline const path        defaultOutDir       { "/tmp" };
         static inline const std::string filename            { ".key" };
         static inline const path        defaultFile         { Keyfile::defaultOutDir/Keyfile::filename };
-        static Keyfile* generate_key();
-
-    private:
-        struct Key{
-            using byte = unsigned char;
-            byte data[PAGE_SIZE];
-        };
-        
-        Key key;
+        static Key* generate_key();
+        static Key* load_key();
 };

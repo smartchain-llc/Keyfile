@@ -1,9 +1,16 @@
+/*
+    1. Load / Generate Key
+
+
+
+*/
+
 #include <initializer_list>
 #include <iostream>
 #include "../include/keyfile.h"
 
-int main(){
+int main(int argc, char* argv[]){
 
-    Keyfile* key = Keyfile::generate_key();
-
+    Key* key = Keyfile::generate_key();
+    
 }

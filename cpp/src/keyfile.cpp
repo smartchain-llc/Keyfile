@@ -13,43 +13,48 @@ bool valid_environment(){
     return true;
 }
 
-Keyfile* Keyfile::generate_key(){
+Key* Keyfile::load_key() {
+    if ( ! std::getenv("EKEY") ) {
+        std::cout << "No environment (EKEY) variable for permanent key" << std::endl;
+        if ( !std::filesystem::exists( Keyfile::defaultOutDir / Keyfile::filename ) ) {
+            std::cout << "No temporary"
+        }
+    }
+}
+
+Key* Keyfile::generate_key(){
     if ( ! valid_environment() )
         return nullptr;
         
-    Keyfile* ret = new Keyfile;
+    Key* ret = new Key;
     std::fstream fstream;
-    std::ifstream instream;
+    fstream.open( "/dev/random", std::ios::in );
 
-    fstream.open( Keyfile::defaultOutDir/Keyfile::filename, std::ios_base::out );
     if ( fstream.bad() ){
-        std::cout << "Could not open file" << std::endl;
-        delete ret;
-        return nullptr;
+        perror( "Could not open /dev/random\n" );
+        exit( 1 );
     }
-    std::cout << "File Opened" << std::endl;
 
-    unsigned char msg[3] = {0xC0, 0xFF, 0xEE};
-    fstream.write(reinterpret_cast<const char*>(msg), sizeof(msg));
+    fstream.read( reinterpret_cast<char*>(ret->data), PAGE_SIZE );
+    if ( fstream.bad() ){
+        perror("Could not read /dev/random\n");
+        exit( 1 );
+    }
 
-    if ( fstream.bad() ) {
-        std::cout << "Could not write" << std::endl;
+    fstream.close();
+    fstream.open( Keyfile::defaultOutDir / Keyfile::filename, std::ios::out );
+    if ( fstream.bad() ){
+        perror( "Could not open default keyfile\n" );
+        exit( 1 );
+    }
+
+    fstream.write( reinterpret_cast<char*>(ret->data), PAGE_SIZE );
+    if ( fstream.bad() ){
+        perror("Could not write to keyfile\n");
+        exit( 1 );
     }
     fstream.flush();
-
-    instream.open("/dev/random", std::ios_base::in);
-    if ( instream.bad() )
-        std::cout << "Could not open instream" << std::endl;
-    instream.read(reinterpret_cast<char*>(ret->key.data), PAGE_SIZE);
-    if ( instream.bad() )
-        std::cout << "Could not read" << std::endl;
-    
-    for (int i = 0; i < PAGE_SIZE; i++){
-        std::cout << ret->key.data[i] << " ";
-        if ( i % 16 == 0 )
-            std::cout << std::endl;
-    }
-        
+    fstream.close();
 
     return ret;
 }
