@@ -10,10 +10,19 @@
 
 using byte = unsigned char;
 struct Key{
-    byte* data      = nullptr;
-    size_t size     = PAGE_SIZE;
+    Key(){
+
+    };
+    ~Key(){ delete data; };
+
+    const byte& operator[](int index){
+        return data[index % size];
+    }
 
     private:
+        byte* data  = nullptr;
+        size_t size = PAGE_SIZE;
+
 };
 class Keyfile{
     using path = std::filesystem::path;
@@ -21,7 +30,7 @@ class Keyfile{
         static inline const path        defaultDirectory    { std::getenv("HOME") };
         static inline const path        defaultOutDir       { "/tmp" };
         static inline const std::string filename            { ".key" };
-        static inline const path        defaultFile         { Keyfile::defaultOutDir/Keyfile::filename };
+        static inline const path        defaultFile         { Keyfile::defaultOutDir / Keyfile::filename };
         static Key* generate_key();
         static Key* load_key();
 };

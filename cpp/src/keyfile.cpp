@@ -17,7 +17,7 @@ Key* Keyfile::load_key() {
     if ( ! std::getenv("EKEY") ) {
         std::cout << "No environment (EKEY) variable for permanent key" << std::endl;
         if ( !std::filesystem::exists( Keyfile::defaultOutDir / Keyfile::filename ) ) {
-            std::cout << "No temporary"
+            std::cout << "No temporary keyfile" << std::endl;
         }
     }
 }
