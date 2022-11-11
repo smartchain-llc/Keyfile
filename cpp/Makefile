@@ -17,8 +17,8 @@ clean:
 test.o: src/test.cpp
 	$(C) -c $(FLAGS) src/test.cpp -o $(DIRO)/$@
 
-keyfile.o: setup 
-	$(C) -c $(FLAGS) src/keyfile.cpp -o $(DIRO)/$@
+key.o: setup 
+	$(C) -c $(FLAGS) src/key.cpp -o $(DIRO)/$@
 
-test: keyfile.o test.o
-	$(C) $(DIRO)/keyfile.o $(DIRO)/test.o -o $(DIRBIN)/$@ 
+test: key.o test.o
+	$(C) $(DIRO)/key.o $(DIRO)/test.o -o $(DIRBIN)/$@ 
