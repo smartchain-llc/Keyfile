@@ -3,6 +3,8 @@
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
+#include <iostream>
+#include <fstream>
 
 #define PAGE_SIZE 4096
 #define SHM_KEY_ERROR (-1)
@@ -36,23 +38,30 @@ class Key{
             const std::string fileName          { ".key" };
             const path defaultFile              { defaultInputDir / fileName };
 
-            path   shmFile;
+            int     memKey  { SHM_KEY_ERROR };
+            char*   shmFile { nullptr };
+            char*   shmIn   { nullptr };
             bool    isValid { false };
-            int     memKey = SHM_KEY_ERROR;
+            std::fstream* fileReader { nullptr };
 
             void set_keyfile_mem_block() {
                 key_t key;
-                key = ftok( defaultFile.c_str(), PAGE_SIZE );
+                (std::filesystem::exists(defaultFile))? shmFile = const_cast<char*>(defaultFile.c_str()) : shmFile = const_cast<char*>((defaultOutputDir/fileName).c_str());
+                key = ftok( shmFile, 4096 );
                 if ( key > 0 ) {
                     memKey = shmget( key, PAGE_SIZE, 0600 | IPC_CREAT );
-                    shmFile = defaultFile;
-                }
 
-                key = ftok( (defaultOutputDir/fileName).c_str(), PAGE_SIZE );
-                if ( key > 0 ) {
-                    memKey = shmget( key, PAGE_SIZE, 0600 | IPC_CREAT );
-                    shmFile = (defaultOutputDir/fileName);
+                    fileReader = new std::fstream( shmFile, std::ios::in );
+                    shmIn = static_cast<char*>( shmat( memKey, NULL, 0) );
+                    fileReader->read(shmIn, PAGE_SIZE);
+                    
+                    fileReader->close();
+                    delete fileReader;
+                    shmdt( shmIn );
+                    shmIn = nullptr;
                 }
+                else
+                    std::cout << "Could not ftok " << shmFile << std::endl;
             }
             
             void destroy_key_mem() {
@@ -69,11 +78,11 @@ class Key{
         void print();
     private:
 
-        Keyfile     keyfile{};
-        byte*       keyData;
-        char*       shmBlock;
+        Keyfile*    keyfile { nullptr };
+        byte*       keyData { nullptr };
+        char*       shmBlock { nullptr };
         const size_t    keySize { PAGE_SIZE };
 
-        char* attach_to_key_mem();
+        void attach_to_key_mem();
         void detach_from_key_mem();
 };

@@ -15,10 +15,10 @@ clean:
 	$(C) -c src/$*.cpp -o $(DIRO)/%.o
 
 test.o: src/test.cpp
-	$(C) -c $(FLAGS) src/test.cpp -o $(DIRO)/$@
+	$(C) -g -c $(FLAGS) src/test.cpp -o $(DIRO)/$@
 
 key.o: setup 
-	$(C) -c $(FLAGS) src/key.cpp -o $(DIRO)/$@
+	$(C) -g -c $(FLAGS) src/key.cpp -o $(DIRO)/$@
 
 test: key.o test.o
 	$(C) $(DIRO)/key.o $(DIRO)/test.o -o $(DIRBIN)/$@ 

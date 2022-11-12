@@ -1,24 +1,22 @@
 #include "../include/key.h"
 
 Key::Key() {
-    this->shmBlock = attach_to_key_mem();
+    keyfile = new Keyfile();
+    attach_to_key_mem();
+
 }
 Key::~Key() {
     if ( shmBlock )
         detach_from_key_mem();
-    delete shmBlock;
-    delete keyData;
+    // delete shmBlock;
+    // delete keyData;
 }
 
-char* Key::attach_to_key_mem() {
-    if( keyfile.mem_key() == -1 )
-        return NULL;
+void Key::attach_to_key_mem() {
+    if( keyfile->mem_key() == -1 )
+        std::cout << "MemKey Invalid!" << std::endl;
     
-    void* block = shmat( keyfile.mem_key(), NULL, 0 );
-    if( ! block )
-        return NULL;
-    
-    return static_cast<char*>( block );
+    shmBlock = static_cast<char*>( shmat( keyfile->mem_key(), NULL, 0 ) );
 }
 
 void Key::detach_from_key_mem() {
@@ -26,5 +24,5 @@ void Key::detach_from_key_mem() {
 }
 
 void Key::print() {
-    printf("%s", *shmBlock);
+    printf("%s", shmBlock);
 }

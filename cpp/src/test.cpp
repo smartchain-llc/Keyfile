@@ -3,5 +3,5 @@
 
 int main(int argc, char* argv[]){
     Key key{};
-    // key.print();
+    key.print();
 }
