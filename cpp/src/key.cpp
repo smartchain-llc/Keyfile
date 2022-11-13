@@ -6,7 +6,7 @@ Key::Key() {
 
 }
 Key::~Key() {
-    if ( shmBlock )
+    if ( keyData )
         detach_from_key_mem();
     // delete shmBlock;
     // delete keyData;
@@ -16,13 +16,21 @@ void Key::attach_to_key_mem() {
     if( keyfile->mem_key() == -1 )
         std::cout << "MemKey Invalid!" << std::endl;
     
-    shmBlock = static_cast<char*>( shmat( keyfile->mem_key(), NULL, 0 ) );
+    keyData = static_cast<byte*>( shmat( keyfile->mem_key(), NULL, 0) );
 }
 
 void Key::detach_from_key_mem() {
-    shmdt( shmBlock );
+    shmdt( keyData );
 }
 
 void Key::print() {
-    printf("%s", shmBlock);
+    std::string byte{};
+    char* c_byte = new char[3];
+    for( int i = 0; i < keySize; i+=15 ) {
+        for ( int j = i; j < i+15; j++ ) {
+            ( keyData[j] <= 0xF )? printf("0x0%x ", keyData[j]) : printf("0x%x ", keyData[j]) ;
+        }
+        std::cout << std::endl;
+    }
+    
 }

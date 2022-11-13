@@ -80,7 +80,6 @@ class Key{
 
         Keyfile*    keyfile { nullptr };
         byte*       keyData { nullptr };
-        char*       shmBlock { nullptr };
         const size_t    keySize { PAGE_SIZE };
 
         void attach_to_key_mem();
