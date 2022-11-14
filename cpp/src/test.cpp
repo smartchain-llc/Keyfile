@@ -3,5 +3,5 @@
 
 int main(int argc, char* argv[]){
     Key key{};
-    key.print();
+    printf("key[%d]: 0x%x\n", 100, key[100]);
 }

@@ -15,14 +15,14 @@ void Key::attach_to_key_mem() {
     if( keyfile->mem_key() == -1 )
         std::cout << "MemKey Invalid!" << std::endl;
     
-    keyData = static_cast<byte*>( shmat( keyfile->mem_key(), NULL, 0) );
+    keyData = static_cast<Key::byte*>( shmat( keyfile->mem_key(), NULL, 0) );
 }
 
 void Key::detach_from_key_mem() {
     shmdt( keyData );
 }
 
-void Key::print() {
+void Key::print() const {
     std::string byte{};
     char* c_byte = new char[3];
 
@@ -39,4 +39,8 @@ void Key::print() {
         std::cout << std::endl;
     }
     
+}
+
+const Key::byte& Key::operator[](int index) const {
+    return keyData[index % keySize];
 }
