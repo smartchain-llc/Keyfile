@@ -7,8 +7,6 @@ Key::Key() {
 Key::~Key() {
     if ( keyData )
         detach_from_key_mem();
-    // delete shmBlock;
-    // delete keyData;
 }
 
 void Key::attach_to_key_mem() {

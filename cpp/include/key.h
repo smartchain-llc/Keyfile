@@ -23,6 +23,7 @@ class Key{
                 else 
                     fatal_error("KeyFile", 69);
             };
+
             const int& mem_key(){ return memKey; };
             const std::string&  filename() { 
                 if ( isValid ) return fileName;
@@ -32,7 +33,21 @@ class Key{
                 if ( isValid ) return defaultFile;
                 fatal_error("Keyfile is not valid.", 69);
             };
+            void generate_keyfile(){
+                if( std::filesystem::exists( defaultFile ) || std::filesystem::exists( (defaultOutputDir / fileName) ))
+                    fatal_error("KeyGen", 69);
 
+                fileReader = new std::fstream( "/dev/random", std::ios::in );
+                char* randData = new char[PAGE_SIZE];
+                fileReader->read( randData, PAGE_SIZE );
+                fileReader->close();
+                
+                fileReader->open( defaultInputDir / fileName, std::ios::out );
+                fileReader->write( defaultFile.c_str(), PAGE_SIZE );
+                fileReader->flush();
+                fileReader->close();
+                delete fileReader;
+            }
         private:
             const path defaultOutputDir         { "/tmp" };
             const path defaultInputDir          { std::getenv("HOME") };
@@ -89,14 +104,13 @@ class Key{
         const byte&     operator[](int index) const;
         const size_t&   size() { return keySize; }
         void print() const;
+        void generate_key();
     private:
 
         Keyfile*    keyfile { nullptr };
         byte*       keyData { nullptr };
         const size_t    keySize { PAGE_SIZE };
         
-
         void attach_to_key_mem();
         void detach_from_key_mem();
-        void generate_key();
 };

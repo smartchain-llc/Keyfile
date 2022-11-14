@@ -15,6 +15,3 @@ endif()
 add_compile_options(${flags})
 
 message("-- [SRC] Adding Sources")
-add_executable(test 
-    test.cpp
-    ${key_src})
