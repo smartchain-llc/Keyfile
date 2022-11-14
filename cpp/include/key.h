@@ -20,15 +20,16 @@ class Key{
                 destroy_key_mem();
             };
             Keyfile() {
-                set_keyfile_mem_block();
+                (std::filesystem::exists( defaultFile ))? shmFile = const_cast<char*>(defaultFile.c_str()) : shmFile = const_cast<char*>((defaultOutputDir/fileName).c_str());
+                (std::filesystem::exists( shmFile ))? set_keyfile_mem_block() : fatal_error("KeyFile", 69);
             };
             const std::string&  filename() { 
                 if ( isValid ) return fileName;
-                else perror("Keyfile is not valid."); 
+                fatal_error("Keyfile is not valid", 69);
             };
             const path&         filePath() { 
                 if ( isValid ) return defaultFile;
-                else perror("Keyfile is not valid.");
+                fatal_error("Keyfile is not valid.", 69);
             };
             const int& mem_key(){ return memKey; };
 
@@ -46,7 +47,6 @@ class Key{
 
             void set_keyfile_mem_block() {
                 key_t key;
-                (std::filesystem::exists(defaultFile))? shmFile = const_cast<char*>(defaultFile.c_str()) : shmFile = const_cast<char*>((defaultOutputDir/fileName).c_str());
                 key = ftok( shmFile, 4096 );
                 if ( key > 0 ) {
                     memKey = shmget( key, PAGE_SIZE, 0600 | IPC_CREAT );
@@ -68,6 +68,11 @@ class Key{
                 if( memKey > 0 )
                     shmctl(memKey, IPC_RMID, NULL);
             }
+
+            void fatal_error(const char* msg, int err) {
+                perror(msg);
+                exit(err);
+            }
     };
 
     public:
@@ -84,4 +89,5 @@ class Key{
 
         void attach_to_key_mem();
         void detach_from_key_mem();
+        void generate_key();
 };
