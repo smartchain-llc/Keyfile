@@ -105,7 +105,6 @@ class Key{
         const byte&     operator[](int index) const;
         const size_t&   size() { return keySize; }
         void print() const;
-        void generate_key();
     private:
 
         Keyfile*    keyfile { nullptr };

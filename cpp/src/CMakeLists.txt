@@ -18,3 +18,4 @@ message("-- [SRC] Adding Sources")
 add_executable(keyfile 
                 binary.cpp 
                 ${key_srcs})
+target_link_libraries(keyfile keyfileobj)

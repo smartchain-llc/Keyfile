@@ -1,4 +1,4 @@
-#include "../include/cli.h"
+#include "cli.h"
 
 void Parameters::generate_options_list() {
     auto add = [](const char&& opt, const int&& argc, const std::initializer_list<char>&& conflictsWith){
