@@ -1,4 +1,6 @@
+cmake_minimum_required(VERSION 3.2)
 
+set(CMAKE_CXX_STANDARD 20)
 option(LIBGEN "Generate Shared Library" OFF)
 if(LIBGEN)
     message("-- [SRC] key.cmake: Generating shared library files.")
@@ -9,19 +11,6 @@ if(LIBGEN)
     set_target_properties(keyfileobj
                           PROPERTIES
                           POSITION_INDEPENDENT_CODE 1)
-    
-    # add_library(keyfile-static
-    #             STATIC
-    #             keyfile-objects)
-    # set_target_properties(keyfile-static
-    #                         PROPERTIES
-    #                         OUTPUT_NAME "keyfileobj")       
-    # add_library(keyfile-shared
-    #             SHARED
-    #             keyfile-objects)
-    # set_target_properties(keyfile-shared
-    #                         PROPERTIES
-    #                         OUTPUT_NAME "keyfileobj")
 endif(LIBGEN)
 
 set(key_srcs

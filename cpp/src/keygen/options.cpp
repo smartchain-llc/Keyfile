@@ -1,16 +1,13 @@
-#include "cli.h"
+#include "options.h"
 
-void Parameters::generate_options_list() {
-    auto add = [](const char&& opt, const int&& argc, const std::initializer_list<char>&& conflictsWith){
-        Parameters::option_list[opt] = option( argc, conflictsWith );
-    };
+CLIArguments::CLIArguments(char** argv) {
+    printf("CLIArgs Constructor <%p>\n", this);
+    
+    mainArgv = argv;
 
-    add('g', 1, {'l'});
+    CLIArguments::initialized = true;
 }
 
-void Parameters::parse_cli_args(int& argc, char* argv[]) {
-    for (int i = 0; i < argc;) {
-        if ( argv[i] && Parameters::is_opt(argv[i]) )
-            printf("");
-    }
+void CLIArguments::parseArgs() const {
+    
 }
