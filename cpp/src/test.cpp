@@ -1,5 +1,5 @@
 
-#include "../include/key.h"
+#include "key/key.h"
 
 int main(int argc, char* argv[]){
     Key key{};

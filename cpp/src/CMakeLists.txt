@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.2)
 project(keyfile-test LANGUAGES CXX)
 message("-- [SRC] Adding key.cmake")
-include(key.cmake)
+include(key/key.cmake)
 
 message("-- [SRC] Adding Compiler Flags")
 list(APPEND flags "-Wall")
@@ -15,3 +15,6 @@ endif()
 add_compile_options(${flags})
 
 message("-- [SRC] Adding Sources")
+add_executable(keyfile 
+                binary.cpp 
+                ${key_srcs})

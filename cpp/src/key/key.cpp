@@ -1,4 +1,4 @@
-#include "../include/key.h"
+#include "key.h"
 
 Key::Key() {
     keyfile = new Keyfile();
@@ -7,13 +7,14 @@ Key::Key() {
 Key::~Key() {
     if ( keyData )
         detach_from_key_mem();
+    delete keyfile;
 }
 
 void Key::attach_to_key_mem() {
     if( keyfile->mem_key() == -1 )
         std::cout << "MemKey Invalid!" << std::endl;
     
-    keyData = static_cast<Key::byte*>( shmat( keyfile->mem_key(), NULL, 0) );
+    keyData = static_cast<byte*>( shmat( keyfile->mem_key(), NULL, 0) );
 }
 
 void Key::detach_from_key_mem() {
@@ -22,7 +23,6 @@ void Key::detach_from_key_mem() {
 
 void Key::print() const {
     std::string byte{};
-    char* c_byte = new char[3];
 
     std::cout << "== Keyfile Info ==" << std::endl;
     std::cout << "-\tFile Path: " << keyfile->filePath() << std::endl;
@@ -30,7 +30,7 @@ void Key::print() const {
     std::cout << "-\tMem Key: " << keyfile->mem_key() << std::endl;
     std::cout << std::endl;
 
-    for( int i = 0; i < keySize; i+=15 ) {
+    for( size_t i = 0; i < keySize; i+=15 ) {
         for ( int j = i; j < i+15; j++ ) {
             ( keyData[j] <= 0xF )? printf("0x0%x ", keyData[j]) : printf("0x%x ", keyData[j]) ;
         }

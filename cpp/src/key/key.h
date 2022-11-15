@@ -15,7 +15,7 @@ class Key{
 
     struct Keyfile{
         public:
-            ~Keyfile(){ };
+            ~Keyfile(){ destroy_key_mem(); };
             Keyfile() {
                 (std::filesystem::exists( defaultFile ))? shmFile = const_cast<char*>(defaultFile.c_str()) : shmFile = const_cast<char*>((defaultOutputDir/fileName).c_str());
                 if (std::filesystem::exists( shmFile ))
@@ -62,9 +62,9 @@ class Key{
 
             void set_keyfile_mem_block() {
                 key_t key;
-                key = ftok( shmFile, 4096 );
+                key = ftok( shmFile, 4096 );    //TODO: Pull group key from env vars
                 if ( key > 0 ) {
-                    memKey = shmget( key, PAGE_SIZE, 0600 );
+                    memKey = shmget( key, PAGE_SIZE, 0 );
                     if( memKey > 0 )
                         return;
                     
@@ -89,6 +89,7 @@ class Key{
             void destroy_key_mem() {
                 if( memKey > 0 )
                     shmctl( memKey, IPC_RMID, NULL );
+                std::cout << "Keyfile Block destroyed" << std::endl;
             }
 
             void fatal_error(const char* msg, int err) {

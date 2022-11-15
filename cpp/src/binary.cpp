@@ -1,4 +1,5 @@
-#include "../include/key.h"
+#include "key/key.h"
 int main() {
-    printf("Test\n");
+    Key key{};
+    printf("key[%d]: 0x%x\n", 101, key[101]);
 }
