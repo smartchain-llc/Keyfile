@@ -3,6 +3,7 @@
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
+#include <sys/mman.h>
 #include <iostream>
 #include <fstream>
 
@@ -36,7 +37,7 @@ class Key{
             void generate_keyfile(){
                 if( std::filesystem::exists( defaultFile ) || std::filesystem::exists( (defaultOutputDir / fileName) ))
                     fatal_error("KeyGen", 69);
-
+                
                 fileReader = new std::fstream( "/dev/random", std::ios::in );
                 char* randData = new char[PAGE_SIZE];
                 fileReader->read( randData, PAGE_SIZE );

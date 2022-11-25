@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.2)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
 option(LIBGEN "Generate Shared Library" OFF)
 if(LIBGEN)
     message("-- [SRC] key.cmake: Generating shared library files.")
